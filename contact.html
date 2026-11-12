@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact | Honeycomb 3D</title>
+  <meta name="description" content="Request a quote from Honeycomb 3D for FDM or resin printing in engineering materials.">
+  <link rel="icon" href="assets/icon-full-color.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img class="logo-light" src="assets/horizontal-full-color.svg" alt="Honeycomb 3D"><img class="logo-dark" src="assets/horizontal-reversed-color.svg" alt="Honeycomb 3D"></a>
+      <nav class="nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="capabilities.html">Capabilities</a>
+        <a href="community.html">Community</a>
+        <a href="about.html">About</a>
+        <a class="btn btn-gold" href="contact.html" aria-current="page">Request a quote</a>
+        <button class="theme-toggle" type="button" aria-label="Switch between light and dark mode" title="Light / dark mode">&#9680;</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero page-hero">
+      <div class="wrap">
+        <p class="eyebrow">Contact</p>
+        <h1>Request a quote</h1>
+        <p class="lede">Tell us about the part. We'll reply by email with questions, a quote, and a way to send your CAD files.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap" style="max-width:760px">
+        <!-- Web3Forms: replace YOUR_ACCESS_KEY with the key from web3forms.com -->
+        <form class="quote" id="quote-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY">
+          <input type="hidden" name="subject" value="New quote request from honeycomb3d.com">
+          <input type="hidden" name="from_name" value="Honeycomb 3D website">
+          <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div>
+            <label for="company">Company</label>
+            <input id="company" name="company" type="text" autocomplete="organization">
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div>
+            <label for="phone">Phone (optional)</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel">
+          </div>
+          <div>
+            <label for="material">Material</label>
+            <select id="material" name="material">
+              <option>Not sure, please recommend</option>
+              <optgroup label="FDM">
+                <option>Nylon</option>
+                <option>ABS</option>
+                <option>ASA</option>
+                <option>Carbon fiber filled</option>
+                <option>TPU</option>
+              </optgroup>
+              <optgroup label="Resin">
+                <option>Tough 1500</option>
+                <option>Flexible 80A</option>
+                <option>True Cast</option>
+                <option>Alpha resins</option>
+              </optgroup>
+            </select>
+          </div>
+          <div>
+            <label for="quantity">Quantity</label>
+            <input id="quantity" name="quantity" type="text" inputmode="numeric" placeholder="e.g. 25">
+          </div>
+          <div class="full">
+            <label for="message">Project details</label>
+            <textarea id="message" name="message" required placeholder="What is the part, roughly how big is it, and what does it need to withstand?"></textarea>
+          </div>
+          <div class="full">
+            <button class="btn btn-gold" type="submit">Send request</button>
+          </div>
+          <p class="form-status full" id="form-status" role="status"></p>
+        </form>
+
+        <p style="margin-top:32px; color:var(--muted)">Prefer email? Write to <a href="mailto:ian@honeycomb3d.com">ian@honeycomb3d.com</a>. We are based in Chesterland, Ohio, with local delivery or shipping.</p>
+        <p style="color:var(--muted)">Your files and project details stay confidential. We use them only to quote and make your parts, and we are glad to sign an NDA. See our <a href="privacy.html">privacy policy</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <img src="assets/horizontal-reversed-color.svg" alt="Honeycomb 3D">
+      <nav aria-label="Footer">
+        <span>Chesterland, Ohio</span>
+        <a href="capabilities.html">Capabilities</a>
+        <a href="community.html">Community</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:ian@honeycomb3d.com">ian@honeycomb3d.com</a>
+      </nav>
+    </div>
+    <div class="wrap legal">
+      <p>&copy; 2026 Honeycomb 3D &middot; <a href="privacy.html">Privacy policy</a></p>
+      <p>Formlabs and Bambu Lab are trademarks of their respective owners. Honeycomb 3D is not affiliated with or endorsed by them.</p>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('quote-form');
+    const status = document.getElementById('form-status');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const button = form.querySelector('button');
+      button.disabled = true;
+      status.className = 'form-status full';
+      status.textContent = 'Sending...';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form)
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+        form.reset();
+        status.classList.add('ok');
+        status.textContent = 'Thanks. Your request was sent and we will reply by email.';
+      } catch (err) {
+        status.classList.add('err');
+        status.textContent = 'That did not send. Please email ian@honeycomb3d.com instead.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
